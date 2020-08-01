@@ -16,7 +16,7 @@
 *.exe
 *.out
 *.app
-baresip
+#baresip
 selftest
 
 # Generated files
