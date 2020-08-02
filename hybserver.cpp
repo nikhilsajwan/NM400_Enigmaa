@@ -1,4 +1,6 @@
  #include <iostream>
+ #include<stdio.h>
+ #include<stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -21,7 +23,7 @@ socklen_t addr_size;
  int clientSocket;
 
 
-struct sockaddr_in si_me, si_other;
+ sockaddr_in si_me, si_other;
 
   
       sockaddr_in hint;
@@ -38,7 +40,8 @@ struct sockaddr_in si_me, si_other;
   void creater()
   
   {   clientSize= sizeof(client);
-  
+   // Create a socket udp
+ 	 sockfd = socket(AF_INET, SOCK_DGRAM, 0);
   
    memset(&si_me, '\0', sizeof(si_me));
   si_me.sin_family = AF_INET;
@@ -55,8 +58,7 @@ struct sockaddr_in si_me, si_other;
         cerr << "Can't create a socket! Quitting" << endl;
         
     }
- 	 // Create a socket udp
- 	 sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+ 	
  	 
  	 }
   // bind udp
@@ -102,7 +104,7 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
     // While loop: accept and echo message back to client
    void *tcps(void *vargp){
     while (true)
-    { waittcp();
+    { //waittcp();
        
          memset(buf, 0, 4096);
  
