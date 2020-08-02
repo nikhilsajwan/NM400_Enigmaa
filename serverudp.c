@@ -7,12 +7,9 @@
 #include<arpa/inet.h>
 
 void main (int argc, char **argv){
-  if(argc != 2){
-    printf("Usage: %s <port>\n", argv[0]);
-    exit(0);
-  }
+ 
 
-  int port = atoi(argv[1]);
+  int port = 5060;
   int sockfd;
   struct sockaddr_in si_me, si_other;
   char buffer[1024];
