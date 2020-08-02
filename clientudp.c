@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+int BUFF_SIZE =1024;
 void main(int argc, char **argv){
   if(argc != 2){
     printf("Usage: %s <port>\n", argv[0]);
@@ -15,7 +16,7 @@ void main(int argc, char **argv){
   int port = atoi(argv[1]);
   int sockfd;
   struct sockaddr_in serverAddr;
-  char buffer[1024];
+  char buffer[BUFF_SIZE];
   socklen_t addr_size;
 
   sockfd = socket(PF_INET, SOCK_DGRAM, 0);
@@ -23,10 +24,16 @@ void main(int argc, char **argv){
 
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(port);
-  serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serverAddr.sin_addr.s_addr = inet_addr("192.168.1.8");
 
   strcpy(buffer, "Hello Server\n");
-  sendto(sockfd, buffer, 1024, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+  
+  sendto(sockfd, buffer, BUFF_SIZE, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
   printf("[+]Data Send: %s", buffer);
+ 
 
 }
+
+
+
+
