@@ -136,7 +136,7 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
     {
     
          recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*)& si_other, &addr_size);
-  printf("[+]Data Received: %s", buffer);
+  printf("\r [+]Data Received: %s", buffer);
   
  }
    
