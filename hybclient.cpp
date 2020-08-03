@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <string>
+#include <time.h>
 #include <pthread.h>
 
 using namespace std;
@@ -16,10 +17,24 @@ int port;
 string ipAddress;
 sockaddr_in hint;
 int connectRes;
-char buf[4096];
+ clock_t start, end1, end2;
+  double tt1,tt2;//time taken
+//char buf[4096];
 string userInput;
+char buf8[12];
+char buf16[32];
+char buf32[72];
+char buf64[155];
+char buf128[327];
+int bs1 =12;
+int bs2 =32;
+int bs3 =72;
+int bs4 =155;
+int bs5 =327;
+int mode=1;
+//char* er ='er';
 
-int BUFF_SIZE =1024;
+int BUFF_SIZE =12;
 int portu = 5062;//udp port on server
  int sockfd;
  sockaddr_in serverAddr;
@@ -62,44 +77,132 @@ sockfd = socket(PF_INET, SOCK_DGRAM, 0);
   serverAddr.sin_addr.s_addr = inet_addr("192.168.1.8");
 
 }
+
+char* udpbuff(){
+
+switch(mode){
+case 1:
+memset(buf8, 'x', 12);
+memset(buf8, '1', 1);
+return buf8;
+break;
+case 2:
+memset(buf16, 'x', 32);
+memset(buf16, '2', 1);
+return buf16;
+break;
+case 3:
+memset(buf32, 'x', 72);
+memset(buf32, '3', 1);
+return buf32;
+break;
+case 4:
+memset(buf64, 'x', 155);
+memset(buf64, '4', 1);
+return buf64;
+break;
+case 5:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+break;
+default:
+printf("error");
+///return e;
+}
+
+
+
+
+}
+char* tcpbuff(){
+
+switch(mode){
+
+
+case 1:
+memset(buf16, 'x', 32);
+memset(buf16, '2', 1);
+return buf16;
+break;
+case 2:
+memset(buf32, 'x', 72);
+memset(buf32, '3', 1);
+return buf32;
+break;
+case 3:
+memset(buf64, 'x', 155);
+memset(buf64, '4', 1);
+return buf64;
+break;
+case 4:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+case 5:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+break;
+default:
+printf("error");
+///return e;
+
+}
+
+
+
+
+}
+
+
+
+
 void *udpc(void *ar){
-char buffer[BUFF_SIZE];
+//char buffer[BUFF_SIZE];
 int n=0;
 while(true){
 
+usleep(20000);
+char * buffer=udpbuff();
 
-strcpy(buffer, "hello server");
+//strcpy(buffer, "hello server");
   
-  sendto(sockfd, buffer, BUFF_SIZE, 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-  printf("\r [+]Data Send: %s", buffer);
+  sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+  printf("\r [+]Data Send: %s mode %d", buffer, mode);
   }
 }
 void *tcpc(void *ar){
 
-    do {
+    do { usleep(5000000);
         //		Enter lines of text
-        cout << "> ";
-        getline(cin, userInput);
-
+       // cout << "> ";
+        //getline(cin, userInput);
+		char *buffer=tcpbuff();
         //		Send to server
-        int sendRes = send(sock, userInput.c_str(), userInput.size() + 1, 0);
+         start = clock();
+        int sendRes = send(sock, buffer, sizeof(buffer) , 0);
+       
         if (sendRes == -1)
         {
             cout << "Could not send to server! Whoops!\r\n";
             continue;
         }
-
+	 end1=clock();
         //		Wait for response
-        memset(buf, 0, 4096);
-        int bytesReceived = recv(sock, buf, 4096, 0);
+        
+        int bytesReceived = recv(sock, buffer, sizeof(buffer), 0);
         if (bytesReceived == -1)
         {
             cout << "There was an error getting response from server\r\n";
         }
         else
         {
+        end2=clock();
+        tt1=(((double) (end1 - start)) *1000)/ CLOCKS_PER_SEC;
+       tt2= (((double) (end2 - start))*1000) / CLOCKS_PER_SEC;
             //		Display response
-            cout << "SERVER> " << string(buf, bytesReceived) << "\r\n";
+            cout << "SERVER> " << string(buffer, bytesReceived) << "time taken ack"<<tt1<<"time taken response"<<tt2<< "\r\n";
         }
     } while(true);
 

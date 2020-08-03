@@ -10,17 +10,28 @@
 #include <string>
 #include <unistd.h>  //Header file for sleep(). man 3 sleep for details. 
 #include <pthread.h> 
-  
+#include <time.h>
  
 using namespace std;
 
-char buffer[1024];
+//char buffer[1024];
 int listening=-1;
 int port =5062;
 int sockfd;
 socklen_t addr_size;
- char buf[4096];
+ //char buf[4096];
  int clientSocket;
+ char buf8[12];
+char buf16[32];
+char buf32[72];
+char buf64[155];
+char buf128[327];
+int bs1 =12;
+int bs2 =32;
+int bs3 =72;
+int bs4 =155;
+int bs5 =327;
+int mode=1;
 
 
  sockaddr_in si_me, si_other;
@@ -101,15 +112,88 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
     // Close listening socket
    // close(listening);
  }
+ char* tcpbuff(){
+
+switch(mode){
+
+
+case 1:
+memset(buf16, 'x', 32);
+memset(buf16, '2', 1);
+return buf16;
+break;
+case 2:
+memset(buf32, 'x', 72);
+memset(buf32, '3', 1);
+return buf32;
+break;
+case 3:
+memset(buf64, 'x', 155);
+memset(buf64, '4', 1);
+return buf64;
+break;
+case 4:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+case 5:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+break;
+default:
+printf("error");
+///return e;
+
+}
+
+
+
+
+}
+char* udpbuff(){
+
+switch(mode){
+case 1:
+memset(buf8, 'x', 12);
+memset(buf8, '1', 1);
+return buf8;
+break;
+case 2:
+memset(buf16, 'x', 32);
+memset(buf16, '2', 1);
+return buf16;
+break;
+case 3:
+memset(buf32, 'x', 72);
+memset(buf32, '3', 1);
+return buf32;
+break;
+case 4:
+memset(buf64, 'x', 155);
+memset(buf64, '4', 1);
+return buf64;
+break;
+case 5:
+memset(buf128, 'x', 327);
+memset(buf128, '5', 1);
+return buf128;
+break;
+default:
+printf("error");
+///return e;
+}
+
+}
     // While loop: accept and echo message back to client
    void *tcps(void *vargp){
     while (true)
     { //waittcp();
        
-         memset(buf, 0, 4096);
+       char *buf = tcpbuff();
  
         // Wait for client to send data
-        int bytesReceived = recv(clientSocket, buf, 4096, 0);
+        int bytesReceived = recv(clientSocket, buf, sizeof(buf), 0);
         if (bytesReceived == -1)
         {
             cerr << "Error in recv(). Quitting" << endl;
@@ -125,7 +209,7 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
         cout << string(buf, 0, bytesReceived) << endl;
  
         // Echo message back to client
-        send(clientSocket, buf, bytesReceived + 1, 0);
+        send(clientSocket, buf, bytesReceived, 0);
     }
     // Close the socket
     close(clientSocket);
@@ -134,8 +218,9 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
    void *udps(void *vargp){
    while(true)
     {
+    char * buffer = udpbuff();
     
-         recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*)& si_other, &addr_size);
+         recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)& si_other, &addr_size);
   printf("\r [+]Data Received: %s", buffer);
   
  }
