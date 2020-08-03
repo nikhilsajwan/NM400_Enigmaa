@@ -31,7 +31,7 @@ int bs2 =32;
 int bs3 =72;
 int bs4 =155;
 int bs5 =327;
-int mode=1;
+int mode=5;
 
 
  sockaddr_in si_me, si_other;
@@ -114,38 +114,12 @@ bind(sockfd, (struct sockaddr*)&si_me, sizeof(si_me));
  }
  char* tcpbuff(){
 
-switch(mode){
-
-
-case 1:
-memset(buf16, 'x', 32);
-memset(buf16, '2', 1);
-return buf16;
-break;
-case 2:
-memset(buf32, 'x', 72);
-memset(buf32, '3', 1);
-return buf32;
-break;
-case 3:
-memset(buf64, 'x', 155);
-memset(buf64, '4', 1);
-return buf64;
-break;
-case 4:
-memset(buf128, 'x', 327);
+memset(buf128, 0, 327);
 memset(buf128, '5', 1);
 return buf128;
-case 5:
-memset(buf128, 'x', 327);
-memset(buf128, '5', 1);
-return buf128;
-break;
-default:
-printf("error");
-///return e;
 
-}
+
+
 
 
 
@@ -153,47 +127,26 @@ printf("error");
 }
 char* udpbuff(){
 
-switch(mode){
-case 1:
-memset(buf8, 'x', 12);
-memset(buf8, '1', 1);
-return buf8;
-break;
-case 2:
-memset(buf16, 'x', 32);
-memset(buf16, '2', 1);
-return buf16;
-break;
-case 3:
-memset(buf32, 'x', 72);
-memset(buf32, '3', 1);
-return buf32;
-break;
-case 4:
-memset(buf64, 'x', 155);
-memset(buf64, '4', 1);
-return buf64;
-break;
-case 5:
-memset(buf128, 'x', 327);
+
+memset(buf128, 0, 327);
 memset(buf128, '5', 1);
 return buf128;
-break;
-default:
-printf("error");
-///return e;
-}
 
 }
+
+
     // While loop: accept and echo message back to client
    void *tcps(void *vargp){
     while (true)
     { //waittcp();
        
-       char *buf = tcpbuff();
+       //char *buf = tcpbuff();
+       memset(buf128, 0, 327);
+       
+       
  
         // Wait for client to send data
-        int bytesReceived = recv(clientSocket, buf, sizeof(buf), 0);
+        int bytesReceived = recv(clientSocket, buf128, 327, 0);
         if (bytesReceived == -1)
         {
             cerr << "Error in recv(). Quitting" << endl;
@@ -206,10 +159,10 @@ printf("error");
             break;
         }
  
-        cout << string(buf, 0, bytesReceived) << endl;
+        cout << string(buf128, 0, bytesReceived) << endl;
  
         // Echo message back to client
-        send(clientSocket, buf, bytesReceived, 0);
+        send(clientSocket, buf128, bytesReceived, 0);
     }
     // Close the socket
     close(clientSocket);
@@ -218,10 +171,11 @@ printf("error");
    void *udps(void *vargp){
    while(true)
     {
-    char * buffer = udpbuff();
+    //char * buffer = udpbuff();
+    memset(buf128, 0, 327);
     
-         recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)& si_other, &addr_size);
-  printf("\r [+]Data Received: %s", buffer);
+         recvfrom(sockfd, buf128, 327, 0, (struct sockaddr*)& si_other, &addr_size);
+  printf("\r [+]Data Received: %s", buf128);
   
  }
    
